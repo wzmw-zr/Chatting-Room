@@ -9,6 +9,7 @@
 #include "../common/chatroom.h"
 #include "../common/tcp_client.h"
 #include "../common/common.h"
+#include "../common/color.h"
 
 const char *conf = "./client.conf";
 
@@ -16,9 +17,7 @@ int main() {
     int port, sockfd;
     Msg msg;
     char ip[20] = {0};
-    printf("%s\n", conf);
     port = atoi(get_value((char *) conf, "SERVER_PORT"));
-    printf("port = %d\n", port);
     strcpy(ip, get_value((char *) conf, "SERVER_IP"));
     printf("ip = %s, port = %d\n", ip, port);
     if ((sockfd = socket_connect(ip, port)) < 0) {
@@ -28,5 +27,12 @@ int main() {
     strcpy(msg.from, get_value((char *) conf, "MY_NAME"));
     msg.flag = 2;
     if (chat_send(msg, sockfd) < 0) return 2;
+    RecvMsg rmsg = chat_recv(sockfd);
+    if (rmsg.retval < 0) {
+        fprintf(stderr, "Error!\n");
+        return 1;
+    }
+    printf(GREEN"Server "NONE": %s\n", rmsg.msg.message);
+    if (rmsg.msg.flag == 3) close(sockfd);
     return 0;
 }
