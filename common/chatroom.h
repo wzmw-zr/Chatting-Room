@@ -18,5 +18,15 @@ typedef struct RecvMsg {
     int retval;
 } RecvMsg;
 
+typedef struct SendMsg {
+    Msg msg;
+    int retval;
+} SendMsg;
+
+int chat_send(Msg msg, int fd) {
+    if (send(fd, (void *) &msg, sizeof(msg), 0) <= 0) return -1;
+    return 0;
+}
+
 RecvMsg chat_recv(int fd);
 #endif

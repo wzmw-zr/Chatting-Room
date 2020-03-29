@@ -21,6 +21,7 @@ char *get_value(char *path, char *key) {
         return NULL;
     }
     while ((nrd = getline(&line, &linecap, fp)) != -1) {
+        printf("%s\n", line);
         if ((sub = strstr(line, key)) == NULL) {
             free(line);
             line = NULL;
@@ -30,10 +31,12 @@ char *get_value(char *path, char *key) {
         if (line[strlen(key)] == '=') {
             strncpy(ans, sub + strlen(key) + 1, nrd - strlen(key) - 1);
             ans[strlen(ans) - 1] = '\0';
+            break;
         }
     }
     free(line);
     fclose(fp);
     if (sub == NULL) return NULL;
+    printf("%s\n", ans);
     return ans;
 }
